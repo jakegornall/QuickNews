@@ -3,6 +3,30 @@ import { StyleSheet, Text, View, Image, Dimensions } from 'react-native';
 import CustomButton from './custom_elements/CustomButton.js';
 
 export default class ArticleTile extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isFavorite: this.props.article.favorite
+    };
+
+    this.addToFavs = this.addToFavs.bind(this);
+    this.removeFromFavs = this.removeFromFavs.bind(this);
+  }
+
+  addToFavs(id) {
+    this.props.addToFavs(id);
+    this.setState({
+      isFavorite: true
+    });
+  }
+
+  removeFromFavs(id) {
+    this.setState({
+      isFavorite: false
+    });
+    this.props.removeFromFavs(id);
+  }
 
   render() {
     let article = this.props.article,
@@ -14,8 +38,14 @@ export default class ArticleTile extends React.Component {
         {image}
         <Text style={styles.text}>{article.description}</Text>
         <CustomButton
+          primary
           title="Read More"
           onPress={() => { this.props.openWebView(article.url) }}
+        />
+        <CustomButton
+          secondary
+          title={ article.favorite ? "Remove From Favorites" : "Add To Favorites" }
+          onPress={() => { article.favorite ? this.removeFromFavs(article.id) : this.addToFavs(article.id); }}
         />
       </View>
     );
@@ -34,9 +64,9 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginRight: 'auto',
     marginLeft: 'auto',
-    shadowOpacity: .5,
+    shadowOpacity: .2,
     shadowColor: "black",
-    shadowRadius: 10
+    shadowRadius: 5
   },
   header: {
     padding: 10,
